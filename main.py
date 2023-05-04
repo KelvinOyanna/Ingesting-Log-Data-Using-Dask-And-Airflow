@@ -25,7 +25,8 @@ def get_database_conn():
     return conn
 
 
-# transform_logs(raw_bucket, transformed_bucket, prefix)
-
-load_to_snowflake()
+def main():
+    conn = get_database_conn()
+    # transform_logs(raw_bucket, transformed_bucket, prefix)
+    load_to_snowflake(conn, 'application_logs', transformed_bucket)
 
