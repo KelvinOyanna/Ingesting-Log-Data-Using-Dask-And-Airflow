@@ -26,7 +26,7 @@ def transform_logs(raw_bucket: str, transformed_bucket: str, prefix: str):
         log_data.to_json(output_file)
         print('transformed logs written to parquet file')
 
-def load_to_snowflake(conn: snowflake.connector.connection.SnowflakeConnection, table_name: str, bucket_name: List[str],):
+def load_to_snowflake(conn: snowflake.connector.connection.SnowflakeConnection, table_name: str, bucket_name: str,):
     last_read_timestamp = datetime.now(tz=tzutc()) - timedelta(minutes=1)  # Read files modified in the last 1 hour
     # Get a list of all the log file keys in the S3 bucket that were modified after the last read timestamp
     paginator = s3.get_paginator('list_objects_v2')
