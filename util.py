@@ -67,7 +67,10 @@ def generate_log_data(num_lines):
         yield log_dict
 
 def generate_log_file(num_lines, filename):
-    with open(filename, "w") as f:
+    with open(filename, "w") as json_file:
         for log_dict in generate_log_data(num_lines):
-            json.dump(log_dict, f)
-            f.write("\n")
+            json.dump(log_dict, json_file, indent=4)
+    print('log files written to external JSON')
+
+
+generate_log_file(100, 'log_gen_file.json')
