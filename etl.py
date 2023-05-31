@@ -1,3 +1,4 @@
+from util import read_from_s3
 import dask.dataframe as dd
 from snowflake.connector.pandas_tools import write_pandas
 import snowflake.connector
@@ -13,11 +14,7 @@ s3 = boto3.client('s3')
 def transform_logs(raw_bucket: str, transformed_bucket: str, prefix: str):
     # Define the timestamp of the last log file that was read
     last_read_timestamp = datetime.now(tz=tzutc()) - timedelta(minutes=1)  # Read files modified in the last 1 hour
-    # Get a list of all the log file keys in the S3 bucket that were modified after the last read timestamp
-    paginator = s3.get_paginator('list_objects_v2')
-    filtered_objs = [obj for page in paginator.paginate(Bucket=raw_bucket, Prefix=prefix) for obj in page["Contents"]\
-                if obj['LastModified'] < last_read_timestamp]
-    obj_keys_path = [f"s3://{raw_bucket}/{obj.get('Key')}" for obj in filtered_objs[1:]]
+    obj_keys_path = read_from_s3(last_read_timestamp, raw_bucket, prefix)
     # Read the new log files into a Dask dataframe
     if len(obj_keys_path) > 0:
         log_data = dd.read_json(obj_keys_path, orient='records', lines=False)
